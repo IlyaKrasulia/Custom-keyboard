@@ -1,23 +1,27 @@
 import { CustomKeyboard } from '../components/CustomKeyboard';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   View,
+  Platform,
+  Keyboard,
 } from 'react-native';
 
 export const HomeScreen = () => {
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [selection, setSelection] = useState({ start: 1, end: 1 });
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
   const [value, setValue] = useState('');
+  const inputRef = useRef(null);
 
   const handleSelectionChange = (event) => {
     setSelection(event.nativeEvent.selection);
   };
 
   const handlePress = () => {
+    Keyboard.dismiss();
     setKeyboardVisible(false);
   };
 
@@ -26,8 +30,8 @@ export const HomeScreen = () => {
       <TouchableWithoutFeedback onPress={handlePress}>
         <View style={styles.container}>
           <TextInput
+            ref={inputRef}
             value={value}
-            selection={selection}
             showSoftInputOnFocus={false}
             keyboardType={undefined}
             onFocus={() => {
@@ -36,6 +40,7 @@ export const HomeScreen = () => {
             onChangeText={setValue}
             placeholder="test"
             onSelectionChange={handleSelectionChange}
+            selection={Platform.OS === 'android' ? selection : undefined}
             placeholderTextColor={'#000'}
             style={styles.input}
           />
@@ -46,6 +51,7 @@ export const HomeScreen = () => {
           keyboardVisible={keyboardVisible}
           setSelection={setSelection}
           setValue={setValue}
+          inputRef={inputRef}
         />
       )}
     </View>
